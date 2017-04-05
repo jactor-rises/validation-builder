@@ -6,21 +6,21 @@
 
     <parent>
         <groupId>com.github.jactor-rises</groupId>
-        <artifactId>validation-builder</artifactId>
+        <artifactId>validation-builder-pom</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sample</artifactId>
+    <artifactId>validation-builder-sample</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.github.jactor-rises</groupId>
-            <artifactId>builder</artifactId>
+            <artifactId>validation-builder</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.jactor-rises</groupId>
-            <artifactId>junit-builder</artifactId>
+            <artifactId>validation-builder-junit</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

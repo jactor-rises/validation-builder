@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.jactor-rises</groupId>
-    <artifactId>validation-builder</artifactId>
+    <artifactId>validation-builder-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>builder</module>
-        <module>junit-builder</module>
-        <module>sample</module>
+        <module>validation-builder</module>
+        <module>validation-builder-junit</module>
+        <module>validation-builder-sample</module>
     </modules>
 
     <properties>
