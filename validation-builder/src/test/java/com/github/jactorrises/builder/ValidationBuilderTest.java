@@ -4,11 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 class ValidationBuilderTest {
 
@@ -19,16 +16,15 @@ class ValidationBuilderTest {
         validationBuilder = new TestValidationBuilder(bean -> Optional.empty());
         Bean bean = validationBuilder.build();
 
-        assertThat(bean, is(notNullValue()));
+        assertThat(bean).isNotNull();
     }
 
     @Test
     void shouldFailValidationOfBean() {
         validationBuilder = new TestValidationBuilder(bean -> Optional.of("invalid"));
 
-        IllegalStateException iae = assertThrows(IllegalStateException.class, () -> validationBuilder.build());
-
-        assertThat(iae.getMessage(), equalTo("invalid"));
+        assertThatIllegalStateException().isThrownBy(() -> validationBuilder.build())
+                .withMessage("invalid");
     }
 
     class Bean {
