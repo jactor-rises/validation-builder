@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class NamedEraTest {
     @Test
@@ -19,7 +17,7 @@ class NamedEraTest {
                 .withEnd(LocalDate.now().minusYears(1))
                 .build();
 
-        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS), is(equalTo(24L)));
+        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS)).isEqualTo(24L);
     }
 
     @Test
@@ -29,6 +27,6 @@ class NamedEraTest {
                 .withBeginning(LocalDate.now().minusYears(1))
                 .build();
 
-        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS), is(equalTo(12L)));
+        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS)).isEqualTo(12L);
     }
 }
