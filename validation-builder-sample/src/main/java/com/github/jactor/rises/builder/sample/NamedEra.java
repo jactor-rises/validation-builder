@@ -1,4 +1,4 @@
-package com.github.jactorrises.builder.sample;
+package com.github.jactor.rises.builder.sample;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

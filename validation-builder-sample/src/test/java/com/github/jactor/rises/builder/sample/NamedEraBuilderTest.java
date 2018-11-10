@@ -1,4 +1,4 @@
-package com.github.jactorrises.builder.sample;
+package com.github.jactor.rises.builder.sample;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
