@@ -1,4 +1,4 @@
-package com.github.jactorrises.builder;
+package com.github.jactor.rises.builder;
 
 import java.util.Optional;
 

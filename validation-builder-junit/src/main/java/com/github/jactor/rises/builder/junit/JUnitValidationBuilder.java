@@ -1,15 +1,15 @@
-package com.github.jactorrises.builder.junit;
+package com.github.jactor.rises.builder.junit;
 
-import com.github.jactorrises.builder.ValidInstance;
-import com.github.jactorrises.builder.ValidationBuilder;
+import com.github.jactor.rises.builder.ValidInstance;
+import com.github.jactor.rises.builder.ValidationBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.github.jactorrises.builder.junit.JUnitValidationBuilder.SuppressValidation.NONE;
-import static com.github.jactorrises.builder.junit.JUnitValidationBuilder.SuppressValidation.ONE;
-import static com.github.jactorrises.builder.junit.JUnitValidationBuilder.SuppressValidation.SUBTRACT;
+import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.NONE;
+import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.ONE;
+import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.SUBTRACT;
 
 /**
  * A {@link ValidationBuilder} which applies conditional validations used for testing...

@@ -1,9 +1,8 @@
-package com.github.jactorrises.builder.sample;
+package com.github.jactor.rises.builder.sample;
 
-import com.github.jactorrises.builder.ValidationBuilder;
+import com.github.jactor.rises.builder.ValidationBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Optional;
 
 public class NamedEraBuilder extends ValidationBuilder<NamedEra> {

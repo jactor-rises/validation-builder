@@ -1,6 +1,6 @@
-package com.github.jactorrises.builder.sample;
+package com.github.jactor.rises.builder.sample;
 
-import com.github.jactorrises.builder.junit.JUnitValidationBuilder;
+import com.github.jactor.rises.builder.junit.JUnitValidationBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
