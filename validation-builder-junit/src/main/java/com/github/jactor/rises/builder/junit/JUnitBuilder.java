@@ -1,28 +1,28 @@
 package com.github.jactor.rises.builder.junit;
 
 import com.github.jactor.rises.builder.ValidInstance;
-import com.github.jactor.rises.builder.ValidationBuilder;
+import com.github.jactor.rises.builder.AbstractBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.NONE;
-import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.ONE;
-import static com.github.jactor.rises.builder.junit.JUnitValidationBuilder.SuppressValidation.SUBTRACT;
+import static com.github.jactor.rises.builder.junit.JUnitBuilder.SuppressValidation.NONE;
+import static com.github.jactor.rises.builder.junit.JUnitBuilder.SuppressValidation.ONE;
+import static com.github.jactor.rises.builder.junit.JUnitBuilder.SuppressValidation.SUBTRACT;
 
 /**
- * A {@link ValidationBuilder} which applies conditional validations used for testing...
+ * A {@link AbstractBuilder} which applies conditional validations used for testing...
  */
-public abstract class JUnitValidationBuilder extends ValidationBuilder<Object> {
+public abstract class JUnitBuilder extends AbstractBuilder<Object> {
     private static final Map<Class<?>, Integer> SUPPRESS_FOR_CLASS = new HashMap<>();
 
-    private JUnitValidationBuilder() {
+    private JUnitBuilder() {
         super(null);
     }
 
     public static void useDefaultValidations() {
-        ValidationBuilder.applyValidationRunner(new ValidationBuilder.ValidationRunner());
+        AbstractBuilder.applyValidationRunner(new AbstractBuilder.ValidationRunner());
     }
 
     public static void suppressOneValidationFor(Class<?> aClass) {
@@ -31,7 +31,7 @@ public abstract class JUnitValidationBuilder extends ValidationBuilder<Object> {
     }
 
     private static void useConditionalValidation() {
-        ValidationBuilder.applyValidationRunner(new SuppressVelidationRunner());
+        AbstractBuilder.applyValidationRunner(new SuppressVelidationRunner());
     }
 
     public static void suppressValidation(Class<?> aClass, int numberOfTimes) {
@@ -39,7 +39,7 @@ public abstract class JUnitValidationBuilder extends ValidationBuilder<Object> {
         SUPPRESS_FOR_CLASS.put(aClass, numberOfTimes);
     }
 
-    static class SuppressVelidationRunner extends ValidationBuilder.ValidationRunner {
+    static class SuppressVelidationRunner extends AbstractBuilder.ValidationRunner {
         @Override
         protected <V> Optional<String> run(ValidInstance<V> validInstance, V bean) {
             @SuppressWarnings("unchecked") Class clazz = bean.getClass();

@@ -42,7 +42,7 @@ public class NamedEra {
         this.name = name;
     }
 
-    public static NamedEraBuilder init() {
+    public static NamedEraBuilder aNamedEra() {
         return new NamedEraBuilder();
     }
 }

@@ -1,6 +1,6 @@
 package com.github.jactor.rises.builder.sample;
 
-import com.github.jactor.rises.builder.junit.JUnitValidationBuilder;
+import com.github.jactor.rises.builder.junit.JUnitBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +15,8 @@ class NamedEraTest {
     @DisplayName("should calculate number of months in an era")
     @Test
     void shouldCalculateNoOfMonthsInAnEra() {
-        JUnitValidationBuilder.suppressOneValidationFor(NamedEra.class);
-        NamedEra namedEra = NamedEra.init()
+        JUnitBuilder.suppressOneValidationFor(NamedEra.class);
+        NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(3))
                 .withEnd(LocalDate.now().minusYears(1))
                 .build();
@@ -27,8 +27,8 @@ class NamedEraTest {
     @DisplayName("should calculate length of era against todays date when no end date is not specified")
     @Test
     void shouldCalculateEraLenghtUsingToDaysDateWhenNoEndDateIsSpecified() {
-        JUnitValidationBuilder.suppressOneValidationFor(NamedEra.class);
-        NamedEra namedEra = NamedEra.init()
+        JUnitBuilder.suppressOneValidationFor(NamedEra.class);
+        NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(1))
                 .build();
 
