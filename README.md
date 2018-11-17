@@ -3,10 +3,9 @@
 ## Purpose
 
 A simple builder to allow a bean instance to have a valid state without constructors containing validation logic. This is
-done using a builder which initializes each bean in a valid state using a lambda expression to evaluate the state of the
-instance. 
+done using a builder which initializes each bean in a valid state by validate the instance build before returning it.
 
-This will simplyfy reading of code and will prevent compile time changes when adding or removing data needed in order to
+This will simplify reading of code and will prevent compile time changes when adding or removing data needed in order to
 evaluate the bean state. A valid instance that is supposed to be interacted with without using mutability-disadvantgeges
 of setters. In order to change the state of the bean, it should be done in "intelligent" methods.
 
@@ -16,7 +15,7 @@ the data needed for the test.
 ## Advantages of use
 
 * simpler code to read
-* immutable beans or beans only mutable through methods (no setters need to be puplic and no public constructor)
+* immutable beans or beans only mutable through methods (no setters need to be public and no public constructor)
 * test validation of valid instances
 * turn of validation in unit testing to provide instances with data only needed for the test
 
@@ -117,37 +116,39 @@ the data needed for the test.
     private class Bean {
     }
 
+###  Test of `JUnitBuilder`
 
-### Test of `JUnitValidationBuilder`
-
+    @DisplayName("should suppress build validation")
     @Test
     void shouldSuppressBuildValidation() {
         assertAll(
-                () -> assertThrows(IllegalStateException.class, () -> new InvalidBeanBuilder().build()),
+                () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build),
                 () -> {
-                    JUnitValidationBuilder.suppressOneValidationFor(InvalidBean.class);
-                    assertThat(new InvalidBeanBuilder().build(), is(notNullValue()));
+                    JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
+                    assertThat(new InvalidBeanBuilder().build()).isNotNull();
                 }
         );
     }
 
+    @DisplayName("should suppress build validation for given class only")
     @Test
     void shouldSuppressBuildValidationOnlyForGivenClass() {
-        JUnitValidationBuilder.suppressOneValidationFor(InvalidBean.class);
+        JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
 
         assertAll(
-                () -> assertThrows(IllegalStateException.class, () -> new AnotherInvalidBeanBuilder().build()),
-                () -> assertThat(new InvalidBeanBuilder().build(), is(notNullValue()))
+                () -> assertThrows(IllegalStateException.class, new AnotherInvalidBeanBuilder()::build),
+                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull()
         );
     }
 
+    @DisplayName("should suppress build validation only a given number of times")
     @Test
     void shouldSuppressBuildValidationGivenNumberOfTimes() {
-        JUnitValidationBuilder.suppressValidation(InvalidBean.class, 2);
+        JUnitBuilder.suppressValidation(InvalidBean.class, 2);
 
         assertAll(
-                () -> assertThat(new InvalidBeanBuilder().build(), is(notNullValue())),
-                () -> assertThat(new InvalidBeanBuilder().build(), is(notNullValue())),
-                () -> assertThrows(IllegalStateException.class, () -> new InvalidBeanBuilder().build())
+                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
+                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
+                () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build)
         );
     }

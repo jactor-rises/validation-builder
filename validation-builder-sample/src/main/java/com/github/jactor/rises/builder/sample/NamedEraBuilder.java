@@ -4,7 +4,6 @@ import com.github.jactor.rises.builder.AbstractBuilder;
 import com.github.jactor.rises.builder.ValidInstance;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class NamedEraBuilder extends AbstractBuilder<NamedEra> {
     private LocalDate beginning;
