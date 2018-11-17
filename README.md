@@ -24,84 +24,97 @@ the data needed for the test.
 
 ### Test of `NamedEraBuilder` (sample of a builder implementation)
 
+    @DisplayName("should not build NamedEra without a naming it")
     @Test
     void shouldNotInitNamedEraWithoutName() {
-        IllegalStateException e = assertThrows(
-                IllegalStateException.class, () -> new NamedEraBuilder().build()
-        );
-
-        assertThat(e.getMessage(), equalTo("A named era must have a name"));
+        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder(NamedEra.validate())::build)
+                .withMessage("A named era must have a name");
     }
 
+    @DisplayName("should not build NamedEra without a beginning")
     @Test
-    void shouldNotInitNamedAreatWithoutBeginning() {
-        IllegalStateException e = assertThrows(
-                IllegalStateException.class, () -> new NamedEraBuilder().withName("An era").build()
-        );
-
-        assertThat(e.getMessage(), equalTo("An era must have a beginning"));
+    void shouldNotInitNamedEraWithoutBeginning() {
+        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder(NamedEra.validate()).withName("An era")::build)
+                .withMessage("An era must have a beginning");
     }
 
+    @DisplayName("should not build NamedEra when the end date is before the beginning")
     @Test
     void shouldNotInitNamedAreatWithBeginningAfterTheEnd() {
-        IllegalStateException e = assertThrows(
-                IllegalStateException.class, () -> new NamedEraBuilder()
-                        .withName("An era")
+        assertThatIllegalStateException().isThrownBy(() ->
+                new NamedEraBuilder(NamedEra.validate())
+                        .withName("The era")
                         .withBeginning(LocalDate.now())
                         .withEnd(LocalDate.now().minusDays(1))
                         .build()
-        );
-
-        assertThat(e.getMessage(), equalTo("An era cannot end before it is started"));
+        ).withMessage("The era cannot end before it is started");
     }
 
+    @DisplayName("should build a NamedEra when all required ")
     @Test
     void shouldInitValidInstanceOnlyApplyingNameAndBeginning() {
-        assertNotNull(new NamedEraBuilder().withName("An era").withBeginning(LocalDate.now()).build());
+        assertThat(
+                new NamedEraBuilder(NamedEra.validate()).withName("An era").withBeginning(LocalDate.now()).build()
+        ).isNotNull();
     }
 
 
 ## Test of `NamedEra` (sample of a bean using a builder)
 
+    @DisplayName("should calculate number of months in an era")
     @Test
     void shouldCalculateNoOfMonthsInAnEra() {
-        JUnitValidationBuilder.suppressOneValidationFor(NamedEra.class);
-        NamedEra namedEra = NamedEra.init()
+        JUnitBuilder.suppressOneValidationFor(NamedEra.class);
+        NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(3))
                 .withEnd(LocalDate.now().minusYears(1))
                 .build();
 
-        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS), is(equalTo(24L)));
+        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS)).isEqualTo(24L);
     }
 
+    @DisplayName("should calculate length of era against todays date when no end date is not specified")
     @Test
     void shouldCalculateEraLenghtUsingToDaysDateWhenNoEndDateIsSpecified() {
-        JUnitValidationBuilder.suppressOneValidationFor(NamedEra.class);
-        NamedEra namedEra = NamedEra.init()
+        JUnitBuilder.suppressOneValidationFor(NamedEra.class);
+        NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(1))
                 .build();
 
-        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS), is(equalTo(12L)));
+        assertThat(namedEra.calculateLength(ChronoUnit.MONTHS)).isEqualTo(12L);
     }
 
 
-### Test of `ValidationBuilder`
+### Test of `AbstractBuilder`
 
+    @DisplayName("should build a validated bean")
     @Test
     void shouldReturnValidatedBean() {
-        validationBuilder = new TestValidationBuilder(bean -> Optional.empty());
-        Bean bean = validationBuilder.build();
+        builder = new AbstractBuilder<Bean>(b -> Optional.empty()) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
 
-        assertThat(bean, is(notNullValue()));
+        Bean bean = builder.build();
+
+        assertThat(bean).isNotNull();
     }
 
+    @DisplayName("should fail the build when the instance is not valid")
     @Test
     void shouldFailValidationOfBean() {
-        validationBuilder = new TestValidationBuilder(bean -> Optional.of("invalid"));
+        builder = new AbstractBuilder<Bean>(b -> Optional.of("invalid")) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
 
-        IllegalStateException iae = assertThrows(IllegalStateException.class, () -> validationBuilder.build());
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("invalid");
+    }
 
-        assertThat(iae.getMessage(), equalTo("invalid"));
+    private class Bean {
     }
 
 

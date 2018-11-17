@@ -1,6 +1,7 @@
 package com.github.jactor.rises.builder.sample;
 
 import com.github.jactor.rises.builder.AbstractBuilder;
+import com.github.jactor.rises.builder.ValidInstance;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -10,22 +11,8 @@ public class NamedEraBuilder extends AbstractBuilder<NamedEra> {
     private LocalDate end;
     private String name;
 
-    NamedEraBuilder() {
-        super(namedEra -> {
-            if (namedEra.getName() == null) {
-                return Optional.of("A named era must have a name");
-            }
-
-            if (namedEra.getBeginning() == null) {
-                return Optional.of(namedEra.getName() + " must have a beginning");
-            }
-
-            if (namedEra.getEnd() != null && namedEra.getEnd().isBefore(namedEra.getBeginning())) {
-                return Optional.of(namedEra.getName() + " cannot end before it is started");
-            }
-
-            return Optional.empty();
-        });
+    NamedEraBuilder(ValidInstance<NamedEra> validInstance) {
+        super(validInstance);
     }
 
     @Override
