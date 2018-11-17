@@ -8,11 +8,11 @@ import java.util.Optional;
  *
  * @param <T> type of bean to build
  */
-public abstract class ValidationBuilder<T> {
+public abstract class AbstractBuilder<T> {
     private static ValidationRunner validationRunner;
     private final ValidInstance<T> validInstance;
 
-    protected ValidationBuilder(ValidInstance<T> validInstance) {
+    protected AbstractBuilder(ValidInstance<T> validInstance) {
         this.validInstance = validInstance;
     }
 
@@ -30,7 +30,7 @@ public abstract class ValidationBuilder<T> {
     }
 
     protected static void applyValidationRunner(ValidationRunner validationRunner) {
-        ValidationBuilder.validationRunner = validationRunner;
+        AbstractBuilder.validationRunner = validationRunner;
     }
 
     public static class ValidationRunner {

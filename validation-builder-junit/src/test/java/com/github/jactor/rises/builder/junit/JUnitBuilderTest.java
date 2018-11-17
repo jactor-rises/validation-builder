@@ -1,7 +1,6 @@
 package com.github.jactor.rises.builder.junit;
 
-import com.github.jactor.rises.builder.ValidationBuilder;
-import com.github.jactor.rises.builder.junit.JUnitValidationBuilder;
+import com.github.jactor.rises.builder.AbstractBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("The JunitValidationBuilder")
-class JUnitValidationBuilderTest {
+class JUnitBuilderTest {
 
     @DisplayName("should suppress build validation")
     @Test
@@ -20,7 +19,7 @@ class JUnitValidationBuilderTest {
         assertAll(
                 () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build),
                 () -> {
-                    JUnitValidationBuilder.suppressOneValidationFor(InvalidBean.class);
+                    JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
                     assertThat(new InvalidBeanBuilder().build()).isNotNull();
                 }
         );
@@ -29,7 +28,7 @@ class JUnitValidationBuilderTest {
     @DisplayName("should suppress build validation for given class only")
     @Test
     void shouldSuppressBuildValidationOnlyForGivenClass() {
-        JUnitValidationBuilder.suppressOneValidationFor(InvalidBean.class);
+        JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
 
         assertAll(
                 () -> assertThrows(IllegalStateException.class, new AnotherInvalidBeanBuilder()::build),
@@ -40,7 +39,7 @@ class JUnitValidationBuilderTest {
     @DisplayName("should suppress build validation only a given number of times")
     @Test
     void shouldSuppressBuildValidationGivenNumberOfTimes() {
-        JUnitValidationBuilder.suppressValidation(InvalidBean.class, 2);
+        JUnitBuilder.suppressValidation(InvalidBean.class, 2);
 
         assertAll(
                 () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
@@ -57,7 +56,7 @@ class JUnitValidationBuilderTest {
 
     }
 
-    private class InvalidBeanBuilder extends ValidationBuilder<InvalidBean> {
+    private class InvalidBeanBuilder extends AbstractBuilder<InvalidBean> {
         InvalidBeanBuilder() {
             super(validBean -> Optional.of("always an invalid bean"));
         }
@@ -68,7 +67,7 @@ class JUnitValidationBuilderTest {
         }
     }
 
-    private class AnotherInvalidBeanBuilder extends ValidationBuilder<AnotherInvalidBean> {
+    private class AnotherInvalidBeanBuilder extends AbstractBuilder<AnotherInvalidBean> {
         AnotherInvalidBeanBuilder() {
             super(validBean -> Optional.of("always an invalid bean"));
         }

@@ -14,14 +14,14 @@ class NamedEraBuilderTest {
     @DisplayName("should not build NamedEra without a naming it")
     @Test
     void shouldNotInitNamedEraWithoutName() {
-        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder()::build)
+        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder(NamedEra.validate())::build)
                 .withMessage("A named era must have a name");
     }
 
     @DisplayName("should not build NamedEra without a beginning")
     @Test
     void shouldNotInitNamedEraWithoutBeginning() {
-        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder().withName("An era")::build)
+        assertThatIllegalStateException().isThrownBy(new NamedEraBuilder(NamedEra.validate()).withName("An era")::build)
                 .withMessage("An era must have a beginning");
     }
 
@@ -29,7 +29,7 @@ class NamedEraBuilderTest {
     @Test
     void shouldNotInitNamedAreatWithBeginningAfterTheEnd() {
         assertThatIllegalStateException().isThrownBy(() ->
-                new NamedEraBuilder()
+                new NamedEraBuilder(NamedEra.validate())
                         .withName("The era")
                         .withBeginning(LocalDate.now())
                         .withEnd(LocalDate.now().minusDays(1))
@@ -40,6 +40,8 @@ class NamedEraBuilderTest {
     @DisplayName("should build a NamedEra when all required ")
     @Test
     void shouldInitValidInstanceOnlyApplyingNameAndBeginning() {
-        assertThat(new NamedEraBuilder().withName("An era").withBeginning(LocalDate.now()).build()).isNotNull();
+        assertThat(
+                new NamedEraBuilder(NamedEra.validate()).withName("An era").withBeginning(LocalDate.now()).build()
+        ).isNotNull();
     }
 }

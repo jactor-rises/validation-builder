@@ -1,7 +1,10 @@
 package com.github.jactor.rises.builder.sample;
 
+import com.github.jactor.rises.builder.ValidInstance;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 public class NamedEra {
     private LocalDate beginning;
@@ -42,7 +45,26 @@ public class NamedEra {
         this.name = name;
     }
 
-    public static NamedEraBuilder init() {
-        return new NamedEraBuilder();
+    public static NamedEraBuilder aNamedEra() {
+        return new NamedEraBuilder(validate());
     }
+
+    static ValidInstance<NamedEra> validate() {
+        return namedEra -> {
+            if (namedEra.getName() == null) {
+                return Optional.of("A named era must have a name");
+            }
+
+            if (namedEra.getBeginning() == null) {
+                return Optional.of(namedEra.getName() + " must have a beginning");
+            }
+
+            if (namedEra.getEnd() != null && namedEra.getEnd().isBefore(namedEra.getBeginning())) {
+                return Optional.of(namedEra.getName() + " cannot end before it is started");
+            }
+
+            return Optional.empty();
+        };
+    }
+
 }
