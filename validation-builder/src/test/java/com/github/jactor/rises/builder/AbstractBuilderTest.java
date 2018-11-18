@@ -39,7 +39,7 @@ class AbstractBuilderTest {
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid field from build: fieldName");
+                .withMessage("Bean has invalid field from build: fieldName");
     }
 
     @DisplayName("should fail the build when the instance is not valid and provide the names of all invalid fields")
@@ -57,7 +57,52 @@ class AbstractBuilderTest {
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid fields from build: fieldName, anotherField");
+                .withMessage("Bean has invalid fields from build: fieldName, anotherField");
+    }
+
+    @DisplayName("should fail the build when a string is empty")
+    @Test
+    void shouldFailValidationOfBeanWhenStringIsEmpty() {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(new InvalidFields().addWhenEmpty("fieldName", ""))
+        ) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
+
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("Bean has invalid field from build: fieldName");
+    }
+
+    @DisplayName("should fail the build when a condition is true")
+    @Test
+    void shouldFailValidationOfBeanWhenConditionIsTrue() {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(new InvalidFields().addWhenTrue("fieldName", () -> true))
+        ) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
+
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("Bean has invalid field from build: fieldName");
+    }
+
+    @DisplayName("should fail the build when a condition is false")
+    @Test
+    void shouldFailValidationOfBeanWhenConditionIsFalse() {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(new InvalidFields().addWhenFalse("fieldName", () -> false))
+        ) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
+
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("Bean has invalid field from build: fieldName");
     }
 
     private class Bean {
