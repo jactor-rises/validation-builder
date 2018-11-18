@@ -30,14 +30,34 @@ class AbstractBuilderTest {
     @DisplayName("should fail the build when the instance is not valid")
     @Test
     void shouldFailValidationOfBean() {
-        builder = new AbstractBuilder<Bean>(b -> Optional.of("invalid")) {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(new InvalidFields().addWhenNull("fieldName", null))
+        ) {
             @Override protected Bean buildBean() {
                 return new Bean();
             }
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("invalid");
+                .withMessage("Invalid field from build: fieldName");
+    }
+
+    @DisplayName("should fail the build when the instance is not valid and provide the names of all invalid fields")
+    @Test
+    void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(new InvalidFields()
+                        .addWhenNull("fieldName", null)
+                        .addWhenNull("anotherField", null)
+                )
+        ) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
+
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("Invalid fields from build: fieldName, anotherField");
     }
 
     private class Bean {

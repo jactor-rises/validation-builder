@@ -3,13 +3,13 @@ package com.github.jactor.rises.builder;
 import java.util.Optional;
 
 /**
- * Every builder should provide an implementation of a valid instance...
+ * Every builder should be able to validate the bean it is building
  */
 @FunctionalInterface
 public interface ValidInstance<T> {
     /**
-     * @param bean to fetch error message from when invalid
-     * @return an {@link Optional} message if instance is not valid, {@link Optional#empty()} if valid
+     * @param bean to validate
+     * @return an {@link Optional} with {@link InvalidFields} if instance is not valid, {@link Optional#empty()} if valid
      */
-    Optional<String> provideInvalidMessage(T bean);
+    Optional<InvalidFields> validate(T bean);
 }
