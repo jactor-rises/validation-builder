@@ -1,7 +1,7 @@
 package com.github.jactor.rises.builder;
 
 /**
- * A builder which does not return a bean instance before its state is validated using the the {@link FunctionalInterface}
+ * A builder which does not return a bean instance before its state is validated using a {@link FunctionalInterface}
  * called {@link ValidInstance}
  *
  * @param <T> type of bean to build
@@ -19,7 +19,7 @@ public abstract class AbstractBuilder<T> {
         T bean = buildBean();
 
         validInstance.validate(bean)
-                .ifPresent(invalidFields -> InvalidFields.throwIllegalStateException(invalidFields, bean.getClass()));
+                .ifPresent(validationResult -> ValidationResult.throwIllegalStateException(validationResult, bean.getClass()));
 
         return bean;
     }

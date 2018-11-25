@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static com.github.jactor.rises.builder.ValidationResult.validate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -31,7 +32,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenNull("fieldName", null))
+                .of(validate().notNull("nullField", null))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -39,16 +40,16 @@ class AbstractBuilderTest {
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Bean has invalid field from build: fieldName");
+                .withMessage("Bean has invalid field from build: nullField");
     }
 
     @DisplayName("should fail the build when the instance is not valid and provide the names of all invalid fields")
     @Test
     void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields()
-                        .addWhenNull("fieldName", null)
-                        .addWhenNull("anotherField", null)
+                .of(validate()
+                        .notNull("aField", null)
+                        .notNull("anotherField", null)
                 )
         ) {
             @Override protected Bean buildBean() {
@@ -57,14 +58,14 @@ class AbstractBuilderTest {
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Bean has invalid fields from build: fieldName, anotherField");
+                .withMessage("Bean has invalid fields from build: aField, anotherField");
     }
 
     @DisplayName("should fail the build when a string is empty")
     @Test
     void shouldFailValidationOfBeanWhenStringIsEmpty() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenEmpty("fieldName", ""))
+                .of(validate().notEmpty("emptyField", ""))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -72,14 +73,14 @@ class AbstractBuilderTest {
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Bean has invalid field from build: fieldName");
+                .withMessage("Bean has invalid field from build: emptyField");
     }
 
     @DisplayName("should fail the build when a condition is true")
     @Test
     void shouldFailValidationOfBeanWhenConditionIsTrue() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenTrue("fieldName", () -> true))
+                .of(validate().notTrue("fieldName", () -> true))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -94,7 +95,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBeanWhenConditionIsFalse() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenFalse("fieldName", () -> false))
+                .of(validate().notFalse("fieldName", () -> false))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
