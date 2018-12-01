@@ -19,7 +19,7 @@ public abstract class AbstractBuilder<T> {
         T bean = buildBean();
 
         validInstance.validate(bean)
-                .ifPresent(validationResult -> ValidationResult.throwIllegalStateException(validationResult, bean.getClass()));
+                .ifPresent(ValidationResult::throwIllegalStateExceptionWhenInvalid);
 
         return bean;
     }

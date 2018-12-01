@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("ValidationResult")
 class ValidationResultTest {
 
-    private ValidationResult validationResult = ValidationResult.validate();
+    private ValidationResult validationResult = ValidationResult.validate(ValidationResultTest.class);
 
     @DisplayName("should throw exception when there are fields that are not valid")
     @Test void shouldThrowExceptionWhenThereAreFieldsThatAreNotValid() {
@@ -17,7 +17,7 @@ class ValidationResultTest {
 
         assertAll(
                 () -> assertThatIllegalStateException().as("the field should be null")
-                        .isThrownBy(() -> ValidationResult.throwIllegalStateException(validationResult, ValidationResultTest.class))
+                        .isThrownBy(() -> validationResult.throwIllegalStateExceptionWhenInvalid())
                         .withMessage("ValidationResultTest has invalid field from build: nullField"),
                 () -> {
                     validationResult.notTrue("trueField", () -> true)
@@ -25,7 +25,7 @@ class ValidationResultTest {
                             .notEmpty("emptyField", "");
 
                     assertThatIllegalStateException().as("four fields should not be valid")
-                            .isThrownBy(() -> ValidationResult.throwIllegalStateException(validationResult, ValidationResultTest.class))
+                            .isThrownBy(() -> validationResult.throwIllegalStateExceptionWhenInvalid())
                             .withMessage("ValidationResultTest has invalid fields from build: nullField, trueField, falseField, emptyField");
                 }
         );

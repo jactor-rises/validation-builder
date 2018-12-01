@@ -32,7 +32,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(validate().notNull("nullField", null))
+                .of(validate(Bean.class).notNull("nullField", null))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -47,7 +47,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(validate()
+                .of(validate(Bean.class)
                         .notNull("aField", null)
                         .notNull("anotherField", null)
                 )
@@ -65,7 +65,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBeanWhenStringIsEmpty() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(validate().notEmpty("emptyField", ""))
+                .of(validate(Bean.class).notEmpty("emptyField", ""))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -80,7 +80,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBeanWhenConditionIsTrue() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(validate().notTrue("fieldName", () -> true))
+                .of(validate(Bean.class).notTrue("fieldName", () -> true))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -95,7 +95,7 @@ class AbstractBuilderTest {
     @Test
     void shouldFailValidationOfBeanWhenConditionIsFalse() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(validate().notFalse("fieldName", () -> false))
+                .of(validate(Bean.class).notFalse("fieldName", () -> false))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
