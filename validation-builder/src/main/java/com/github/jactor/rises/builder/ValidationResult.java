@@ -76,6 +76,10 @@ public class ValidationResult {
         return validationResult;
     }
 
+    public static void setNewInstance(NewInstance newInstance) {
+        ValidationResult.newInstance = newInstance;
+    }
+
     @FunctionalInterface
     protected interface NewInstance {
         ValidationResult init();
