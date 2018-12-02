@@ -10,7 +10,7 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>validation-builder-junit</artifactId>
+    <artifactId>validation-builder-test</artifactId>
 
     <dependencies>
         <dependency>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.2.0</version>
+            <version>${org.junit.jupiter.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

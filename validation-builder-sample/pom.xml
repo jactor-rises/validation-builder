@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.jactor-rises</groupId>
-            <artifactId>validation-builder-junit</artifactId>
+            <artifactId>validation-builder-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

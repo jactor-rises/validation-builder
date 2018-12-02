@@ -9,10 +9,11 @@
     <version>1.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+    <name>validation</name>
 
     <modules>
         <module>validation-builder</module>
-        <module>validation-builder-junit</module>
+        <module>validation-builder-test</module>
         <module>validation-builder-sample</module>
     </modules>
 
@@ -37,6 +38,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${org.junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <version>${org.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
