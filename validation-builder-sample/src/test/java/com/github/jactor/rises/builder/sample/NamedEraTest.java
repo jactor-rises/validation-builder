@@ -11,10 +11,10 @@ import java.time.temporal.ChronoUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("NamedEra")
-@ExtendWith(ValidationResultExtension.class)
 class NamedEraTest {
 
     @DisplayName("should calculate number of months in an era")
+    @ExtendWith(ValidationResultExtension.class)
     @Test void shouldCalculateNoOfMonthsInAnEra() {
         NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(3))
@@ -25,6 +25,7 @@ class NamedEraTest {
     }
 
     @DisplayName("should calculate length of era against todays date when no end date is not specified")
+    @ExtendWith(ValidationResultExtension.class)
     @Test void shouldCalculateEraLenghtUsingToDaysDateWhenNoEndDateIsSpecified() {
         NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(1))

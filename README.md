@@ -9,7 +9,7 @@ This will simplify reading of code and will prevent compile time changes when ed
 A valid instance that is supposed to be interacted with without using mutability-disadvantages of setters.
 In order to change the state of the bean, it should be done in "intelligent" methods.
 
-This will also simplify unit testing as it is possible to turn of validation during testing allowing to only test with
+This will also simplify unit testing as it is possible to turn off validation during testing allowing to only test with
 the data needed for the test.
 
 ### Purpose of the validation result
@@ -23,14 +23,13 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
 * simpler code to read and maintain
 * easier maintenance
 * immutable beans or beans only mutable through methods (no setters need to be public and no public constructor)
-* simle unit testing of validation for valid instances
+* simple unit testing of validation for valid instances
 * turn of validation in unit testing to provide instances with data only needed for the test
 
 ## Usages of the Builder
 
 ### Test of `NamedEraBuilder` (sample of a builder implementation)
 
-`
     @DisplayName("should not build NamedEra without a naming it")
     @Test void shouldNotInitNamedEraWithoutName() {
         assertThatIllegalStateException().isThrownBy(new NamedEraBuilder(NamedEra.validate())::build)
@@ -74,6 +73,7 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
 ## Test of `NamedEra` (sample of a bean using a builder)
 
     @DisplayName("should calculate number of months in an era")
+    @ExtendWith(ValidationResultExtension.class)
     @Test void shouldCalculateNoOfMonthsInAnEra() {
         NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(3))
@@ -84,6 +84,7 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
     }
 
     @DisplayName("should calculate length of era against todays date when no end date is not specified")
+    @ExtendWith(ValidationResultExtension.class)
     @Test void shouldCalculateEraLenghtUsingToDaysDateWhenNoEndDateIsSpecified() {
         NamedEra namedEra = NamedEra.aNamedEra()
                 .withBeginning(LocalDate.now().minusYears(1))
@@ -95,9 +96,8 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
 
 ### Test of `AbstractBuilder`
 
-    @DisplayName("should build a validated bean")
-    @Test
-    void shouldReturnValidatedBean() {
+    @DisplayName("should build a bean")
+    @Test void shouldBuildBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional.empty()) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -110,10 +110,9 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
     }
 
     @DisplayName("should fail the build when the instance is not valid")
-    @Test
-    void shouldFailValidationOfBean() {
+    @Test void shouldFailValidationOfBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenNull("fieldName", null))
+                .of(validate(Bean.class).notNull("nullField", null, "cannot be null"))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -121,16 +120,15 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid field from build: fieldName");
+                .withMessage("Bean has invalid fields:\n- 'nullField' cannot be null");
     }
 
     @DisplayName("should fail the build when the instance is not valid and provide the names of all invalid fields")
-    @Test
-    void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
+    @Test void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields()
-                        .addWhenNull("fieldName", null)
-                        .addWhenNull("anotherField", null)
+                .of(validate(Bean.class)
+                        .notNull("aField", null, "cannot be null")
+                        .notNull("anotherField", null, "cannot be null")
                 )
         ) {
             @Override protected Bean buildBean() {
@@ -139,14 +137,27 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid fields from build: fieldName, anotherField");
+                .withMessage("Bean has invalid fields:\n- 'aField' cannot be null,\n- 'anotherField' cannot be null");
+    }
+
+    @DisplayName("should fail the build when a string is empty")
+    @Test void shouldFailValidationOfBeanWhenStringIsEmpty() {
+        builder = new AbstractBuilder<Bean>(b -> Optional
+                .of(validate(Bean.class).notEmpty("emptyField", "", "cannot be empty"))
+        ) {
+            @Override protected Bean buildBean() {
+                return new Bean();
+            }
+        };
+
+        assertThatIllegalStateException().isThrownBy(() -> builder.build())
+                .withMessage("Bean has invalid fields:\n- 'emptyField' cannot be empty");
     }
 
     @DisplayName("should fail the build when a condition is true")
-    @Test
-    void shouldFailValidationOfBeanWhenConditionIsTrue() {
+    @Test void shouldFailValidationOfBeanWhenConditionIsTrue() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenTrue("fieldName", () -> true))
+                .of(validate(Bean.class).notTrue("fieldName", () -> true, "validation cannot be true"))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -154,14 +165,13 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid field from build: fieldName");
+                .withMessage("Bean has invalid fields:\n- 'fieldName' validation cannot be true");
     }
 
     @DisplayName("should fail the build when a condition is false")
-    @Test
-    void shouldFailValidationOfBeanWhenConditionIsFalse() {
+    @Test void shouldFailValidationOfBeanWhenConditionIsFalse() {
         builder = new AbstractBuilder<Bean>(b -> Optional
-                .of(new InvalidFields().addWhenFalse("fieldName", () -> false))
+                .of(validate(Bean.class).notFalse("fieldName", () -> false, "validation cannot be false"))
         ) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -169,45 +179,77 @@ be done with a `@ExtendWith(ValidationResultExtension.class)`
         };
 
         assertThatIllegalStateException().isThrownBy(() -> builder.build())
-                .withMessage("Invalid field from build: fieldName");
+                .withMessage("Bean has invalid fields:\n- 'fieldName' validation cannot be false");
     }
 
     private class Bean {
     }
 
-###  Test of `JUnitBuilder`
+###  Test of `ValidationResultExtension`
 
-    @DisplayName("should suppress build validation")
-    @Test
-    void shouldSuppressBuildValidation() {
-        assertAll(
-                () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build),
-                () -> {
-                    JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
-                    assertThat(new InvalidBeanBuilder().build()).isNotNull();
-                }
-        );
+    @ExtendWith(ValidationResultExtension.class)
+    @DisplayName("used only as an declarative extension")
+    @Nested class DeclarativeUse {
+
+        @DisplayName("should suppress all build validations when no specification is given")
+        @Test void shouldSuppressBuildValidations() {
+            assertAll(
+                    () -> assertThat(new InvalidBeanBuilder().build()).as("invalid bean").isNotNull(),
+                    () -> assertThat(new AnotherInvalidBeanBuilder().build()).as("another invalid bean").isNotNull()
+            );
+        }
     }
 
-    @DisplayName("should suppress build validation for given class only")
-    @Test
-    void shouldSuppressBuildValidationOnlyForGivenClass() {
-        JUnitBuilder.suppressOneValidationFor(InvalidBean.class);
+    @ExtendWith(ValidationResultExtension.class)
+    @DisplayName("used as an declarative, but programmatically extension")
+    @Nested class ProgrammaticallyUse {
 
-        assertAll(
-                () -> assertThrows(IllegalStateException.class, new AnotherInvalidBeanBuilder()::build),
-                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull()
-        );
+        @DisplayName("should suppress a validation for given class only")
+        @Test void shouldSuppressBuildValidationOnlyForGivenClass() {
+            ValidationResultExtension.suppressValidationFor(InvalidBean.class);
+
+            assertAll(
+                    () -> assertThat(new InvalidBeanBuilder().build()).as("invalid bean").isNotNull(),
+                    () -> assertThatIllegalStateException().as("another invalid bean").isThrownBy(new AnotherInvalidBeanBuilder()::build)
+            );
+        }
+
+        @DisplayName("should suppress build validation only a given number of times")
+        @Test void shouldSuppressBuildValidationGivenNumberOfTimes() {
+            ValidationResultExtension.suppressValidationFor(InvalidBean.class, 2);
+
+            assertAll(
+                    () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
+                    () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
+                    () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build)
+            );
+        }
     }
 
-    @DisplayName("should suppress build validation only a given number of times")
-    @Test
-    void shouldSuppressBuildValidationGivenNumberOfTimes() {
-        JUnitBuilder.suppressValidation(InvalidBean.class, 2);
+    private class InvalidBean {
+    }
 
-        assertAll(
-                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
-                () -> assertThat(new InvalidBeanBuilder().build()).isNotNull(),
-                () -> assertThrows(IllegalStateException.class, new InvalidBeanBuilder()::build)
-        );
+    private class AnotherInvalidBean {
+    }
+
+    class InvalidBeanBuilder extends AbstractBuilder<InvalidBean> {
+        InvalidBeanBuilder() {
+            super(validInstance -> ValidationResult.validate(InvalidBean.class).notFalse("aField", () -> false, "validation cannot be false").returnResult());
+        }
+
+        @Override
+        protected InvalidBean buildBean() {
+            return new InvalidBean();
+        }
+    }
+
+    class AnotherInvalidBeanBuilder extends AbstractBuilder<AnotherInvalidBean> {
+        AnotherInvalidBeanBuilder() {
+            super(validInstance -> ValidationResult.validate(AnotherInvalidBean.class).notFalse("aField", () -> false, "validation cannot be falseddddddddsdfadfasdfasdf").returnResult());
+        }
+
+        @Override
+        protected AnotherInvalidBean buildBean() {
+            return new AnotherInvalidBean();
+        }
     }

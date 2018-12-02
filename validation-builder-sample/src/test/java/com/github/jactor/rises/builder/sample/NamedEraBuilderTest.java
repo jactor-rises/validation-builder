@@ -45,10 +45,21 @@ class NamedEraBuilderTest {
         ).withMessageContaining("'end' cannot be equal to the beginning");
     }
 
-    @DisplayName("should build a NamedEra when all required ")
+    @DisplayName("should build a NamedEra when only applying the name and beginning")
     @Test void shouldInitValidInstanceOnlyApplyingNameAndBeginning() {
         assertThat(
                 new NamedEraBuilder(NamedEra.validate()).withName("An era").withBeginning(LocalDate.now()).build()
+        ).isNotNull();
+    }
+
+    @DisplayName("should build a NamedEra when all fields are valid")
+    @Test void shouldInitValidInstanceWhenAllFieldsAreValid() {
+        assertThat(
+                new NamedEraBuilder(NamedEra.validate())
+                        .withName("An era")
+                        .withBeginning(LocalDate.now().minusYears(100))
+                        .withEnd(LocalDate.now().minusYears(50))
+                        .build()
         ).isNotNull();
     }
 }

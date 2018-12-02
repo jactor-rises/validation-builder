@@ -15,8 +15,7 @@ class AbstractBuilderTest {
     private AbstractBuilder<Bean> builder;
 
     @DisplayName("should build a bean")
-    @Test
-    void shouldBuildBean() {
+    @Test void shouldBuildBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional.empty()) {
             @Override protected Bean buildBean() {
                 return new Bean();
@@ -29,8 +28,7 @@ class AbstractBuilderTest {
     }
 
     @DisplayName("should fail the build when the instance is not valid")
-    @Test
-    void shouldFailValidationOfBean() {
+    @Test void shouldFailValidationOfBean() {
         builder = new AbstractBuilder<Bean>(b -> Optional
                 .of(validate(Bean.class).notNull("nullField", null, "cannot be null"))
         ) {
@@ -44,8 +42,7 @@ class AbstractBuilderTest {
     }
 
     @DisplayName("should fail the build when the instance is not valid and provide the names of all invalid fields")
-    @Test
-    void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
+    @Test void shouldFailValidationOfBeanWithMessageContainingAllTheInvalidFields() {
         builder = new AbstractBuilder<Bean>(b -> Optional
                 .of(validate(Bean.class)
                         .notNull("aField", null, "cannot be null")
@@ -62,8 +59,7 @@ class AbstractBuilderTest {
     }
 
     @DisplayName("should fail the build when a string is empty")
-    @Test
-    void shouldFailValidationOfBeanWhenStringIsEmpty() {
+    @Test void shouldFailValidationOfBeanWhenStringIsEmpty() {
         builder = new AbstractBuilder<Bean>(b -> Optional
                 .of(validate(Bean.class).notEmpty("emptyField", "", "cannot be empty"))
         ) {
@@ -77,8 +73,7 @@ class AbstractBuilderTest {
     }
 
     @DisplayName("should fail the build when a condition is true")
-    @Test
-    void shouldFailValidationOfBeanWhenConditionIsTrue() {
+    @Test void shouldFailValidationOfBeanWhenConditionIsTrue() {
         builder = new AbstractBuilder<Bean>(b -> Optional
                 .of(validate(Bean.class).notTrue("fieldName", () -> true, "validation cannot be true"))
         ) {
@@ -92,8 +87,7 @@ class AbstractBuilderTest {
     }
 
     @DisplayName("should fail the build when a condition is false")
-    @Test
-    void shouldFailValidationOfBeanWhenConditionIsFalse() {
+    @Test void shouldFailValidationOfBeanWhenConditionIsFalse() {
         builder = new AbstractBuilder<Bean>(b -> Optional
                 .of(validate(Bean.class).notFalse("fieldName", () -> false, "validation cannot be false"))
         ) {
