@@ -1,13 +1,13 @@
-# Validation Builder
+# Validation Builder & Validation Result
 
 ## Purpose
 
-A simple builder to allow a bean instance to have a valid state without constructors containing validation logic. This is
-done using a builder which initializes the bean, validates it, then returning it.
+A simple builder to allow a bean instance to have a valid state without constructors containing validation logic.
+This is done using a builder which initializes the bean, validates it, then returning it.
 
-This will simplify reading of code and will prevent compile time changes when editing complex constructors. A valid
-instance that is supposed to be interacted with without using mutability-disadvantages of setters. In order to change the
-state of the bean, it should be done in "intelligent" methods.
+This will simplify reading of code and will prevent compile time changes when editing complex constructors.
+A valid instance that is supposed to be interacted with without using mutability-disadvantages of setters.
+In order to change the state of the bean, it should be done in "intelligent" methods.
 
 This will also simplify unit testing as it is possible to turn of validation during testing allowing to only test with
 the data needed for the test.

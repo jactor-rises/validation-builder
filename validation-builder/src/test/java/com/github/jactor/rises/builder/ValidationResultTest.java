@@ -13,20 +13,25 @@ class ValidationResultTest {
 
     @DisplayName("should throw exception when there are fields that are not valid")
     @Test void shouldThrowExceptionWhenThereAreFieldsThatAreNotValid() {
-        validationResult.notNull("nullField", null);
+        validationResult.notNull("nullField", null, "cannot be null");
 
         assertAll(
                 () -> assertThatIllegalStateException().as("the field should be null")
                         .isThrownBy(() -> validationResult.throwIllegalStateExceptionWhenInvalid())
-                        .withMessage("ValidationResultTest has invalid field from build: nullField"),
+                        .withMessage("ValidationResultTest has invalid fields:\n- 'nullField' cannot be null"),
                 () -> {
-                    validationResult.notTrue("trueField", () -> true)
-                            .notFalse("falseField", () -> false)
-                            .notEmpty("emptyField", "");
+                    validationResult.notTrue("trueField", () -> true, "cannot be true")
+                            .notFalse("falseField", () -> false, "cannot be false")
+                            .notEmpty("emptyField", "", "cannot be empty");
 
                     assertThatIllegalStateException().as("four fields should not be valid")
                             .isThrownBy(() -> validationResult.throwIllegalStateExceptionWhenInvalid())
-                            .withMessage("ValidationResultTest has invalid fields from build: nullField, trueField, falseField, emptyField");
+                            .withMessage("ValidationResultTest has invalid fields:\n" +
+                                    "- 'nullField' cannot be null,\n" +
+                                    "- 'trueField' cannot be true,\n" +
+                                    "- 'falseField' cannot be false,\n" +
+                                    "- 'emptyField' cannot be empty"
+                            );
                 }
         );
     }

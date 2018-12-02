@@ -64,7 +64,7 @@ class ValidationResultExtensionTest {
 
     class InvalidBeanBuilder extends AbstractBuilder<InvalidBean> {
         InvalidBeanBuilder() {
-            super(validInstance -> ValidationResult.validate(InvalidBean.class).notFalse("aField", () -> false).returnResult());
+            super(validInstance -> ValidationResult.validate(InvalidBean.class).notFalse("aField", () -> false, "validation cannot be false").returnResult());
         }
 
         @Override
@@ -75,7 +75,7 @@ class ValidationResultExtensionTest {
 
     class AnotherInvalidBeanBuilder extends AbstractBuilder<AnotherInvalidBean> {
         AnotherInvalidBeanBuilder() {
-            super(validInstance -> ValidationResult.validate(AnotherInvalidBean.class).notFalse("aField", () -> false).returnResult());
+            super(validInstance -> ValidationResult.validate(AnotherInvalidBean.class).notFalse("aField", () -> false, "validation cannot be falseddddddddsdfadfasdfasdf").returnResult());
         }
 
         @Override

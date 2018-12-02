@@ -1,10 +1,10 @@
 package com.github.jactor.rises.builder.sample;
 
 import com.github.jactor.rises.builder.ValidInstance;
+import com.github.jactor.rises.builder.ValidationResult;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 public class NamedEra {
     private LocalDate beginning;
@@ -18,7 +18,7 @@ public class NamedEra {
 
     @Override
     public String toString() {
-        return NamedEra.class.getSimpleName() + " named " + name + ": from " + beginning + " to " + end;
+        return String.format("%s named %s from %s%s", NamedEra.class.getSimpleName(), name, beginning, end != null ? " to " + end : "");
     }
 
     public LocalDate getBeginning() {
@@ -50,21 +50,11 @@ public class NamedEra {
     }
 
     static ValidInstance<NamedEra> validate() {
-        return namedEra -> {
-            if (namedEra.getName() == null) {
-                return Optional.of("A named era must have a name");
-            }
-
-            if (namedEra.getBeginning() == null) {
-                return Optional.of(namedEra.getName() + " must have a beginning");
-            }
-
-            if (namedEra.getEnd() != null && namedEra.getEnd().isBefore(namedEra.getBeginning())) {
-                return Optional.of(namedEra.getName() + " cannot end before it is started");
-            }
-
-            return Optional.empty();
-        };
+        return namedEra -> ValidationResult.validate(NamedEra.class)
+                .notEmpty("name", namedEra.getName(), "must be named")
+                .notNull("beginning", namedEra.getBeginning(), "must have a beginning")
+                .notTrue("end", () -> namedEra.getEnd() != null && namedEra.getEnd().isEqual(namedEra.getBeginning()), "cannot be equal to the beginning")
+                .notTrue("end", () -> namedEra.getEnd() != null && namedEra.getEnd().isBefore(namedEra.getBeginning()), "cannot come before the beginning")
+                .returnResult();
     }
-
 }

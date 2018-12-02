@@ -3,43 +3,44 @@ package com.github.jactor.rises.builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ValidationResult {
     private static NewInstance newInstance = ValidationResult::new;
 
-    private final List<String> names = new ArrayList<>();
+    private final List<InvalidField> names = new ArrayList<>();
     private Class<?> classToValidate;
 
     protected ValidationResult() {
     }
 
-    public ValidationResult notNull(String fieldName, Object fieldValue) {
+    public ValidationResult notNull(String fieldName, Object fieldValue, String fieldMessage) {
         if (fieldValue == null) {
-            names.add(fieldName);
+            names.add(new InvalidField(fieldName, fieldMessage));
         }
 
         return this;
     }
 
-    public ValidationResult notEmpty(String fieldName, String fieldValue) {
+    public ValidationResult notEmpty(String fieldName, String fieldValue, String fieldMessage) {
         if (fieldValue == null || "".equals(fieldValue.trim())) {
-            names.add(fieldName);
+            names.add(new InvalidField(fieldName, fieldMessage));
         }
 
         return this;
     }
 
-    public ValidationResult notTrue(String fieldName, FieldCondition fieldCondition) {
+    public ValidationResult notTrue(String fieldName, FieldCondition fieldCondition, String fieldMessage) {
         if (fieldCondition.isTrue()) {
-            names.add(fieldName);
+            names.add(new InvalidField(fieldName, fieldMessage));
         }
 
         return this;
     }
 
-    public ValidationResult notFalse(String fieldName, FieldCondition fieldCondition) {
+    public ValidationResult notFalse(String fieldName, FieldCondition fieldCondition, String fieldMessage) {
         if (!fieldCondition.isTrue()) {
-            names.add(fieldName);
+            names.add(new InvalidField(fieldName, fieldMessage));
         }
 
         return this;
@@ -50,10 +51,10 @@ public class ValidationResult {
     }
 
     protected void throwIllegalStateExceptionWhenInvalid() {
-        String fields = names.size() == 1 ? "field" : "fields";
-
         throw new IllegalStateException(
-                String.format("%s has invalid %s from build: %s", getClassToValidate().getSimpleName(), fields, String.join(", ", names))
+                String.format("%s has invalid fields:%n- %s", getClassToValidate().getSimpleName(),
+                        names.stream().map(Object::toString).collect(Collectors.joining(String.format(",%n- ")))
+                )
         );
     }
 
@@ -76,7 +77,7 @@ public class ValidationResult {
         return validationResult;
     }
 
-    public static void setNewInstance(NewInstance newInstance) {
+    protected static void setNewInstance(NewInstance newInstance) {
         ValidationResult.newInstance = newInstance;
     }
 
@@ -88,5 +89,19 @@ public class ValidationResult {
     @FunctionalInterface
     public interface FieldCondition {
         boolean isTrue();
+    }
+
+    class InvalidField {
+        final String fieldName;
+        final String fieldMessage;
+
+        InvalidField(String fieldName, String fieldMessage) {
+            this.fieldName = fieldName;
+            this.fieldMessage = fieldMessage;
+        }
+
+        @Override public String toString() {
+            return "'" + fieldName + "' " + fieldMessage;
+        }
     }
 }
